@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RikiApp</string>
+    <string name="app_name">sjRikiApp</string>
     <!-- Topic values -->
     <string name="joy_topic">/cmd_vel</string>
     <string name="camera_topic">/image_raw/compressed</string>

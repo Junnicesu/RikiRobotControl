@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.robotca.ControlApp">
+    package="com.robotca.sjControlApp">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -23,7 +23,7 @@
         tools:replace="android:icon"
         android:icon="@drawable/logo">
         <activity
-            android:name=".RobotChooser"
+            android:name="com.robotca.ControlApp.RobotChooser"
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize">
@@ -34,12 +34,12 @@
         </activity>
 
         <activity
-            android:name=".ControlApp"
+            android:name="com.robotca.ControlApp.ControlApp"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="orientation|screenSize"/>
         <activity
-            android:name=".SplashActivity"
+            android:name="com.robotca.ControlApp.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme"
             android:configChanges="orientation|screenSize">
@@ -56,7 +56,7 @@
             </intent-filter>
         </service>
         <activity
-            android:name=".ShowCamera"
+            android:name="com.robotca.ControlApp.ShowCamera"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
