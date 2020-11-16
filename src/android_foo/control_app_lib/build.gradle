@@ -41,6 +41,12 @@ android {
         versionName "1.0"
     }
     buildToolsVersion '25.0.2'
+    // Exclude a few files that are duplicated across our dependencies and
+    // prevent packaging Android applications.
+    packagingOptions {
+        exclude "META-INF/LICENSE.txt"
+        exclude "META-INF/NOTICE.txt"
+    }
 }
 
 dependencies {
