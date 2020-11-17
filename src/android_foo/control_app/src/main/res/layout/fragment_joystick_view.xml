@@ -6,7 +6,7 @@
             android:layout_height="match_parent"
             android:gravity="center_horizontal">
 
-    <com.robotca.ControlApp.Views.JoystickView
+    <com.robotca.sjControlApp.Views.JoystickView
         android:id="@+id/joystick_view"
         android:layout_width="300dip"
         android:layout_height="300dip"

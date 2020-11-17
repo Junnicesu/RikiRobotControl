@@ -22,13 +22,13 @@
                 android:layout_height="match_parent" />
             <fragment
                 android:id="@+id/hud_fragment"
-                android:name="com.robotca.ControlApp.Fragments.HUDFragment"
+                android:name="com.robotca.sjControlApp.Fragments.HUDFragment"
                 android:layout_width="match_parent"
                 android:layout_height="48sp"
                 tools:layout="@layout/fragment_hud" />
             <fragment
                 android:id="@+id/joystick_fragment"
-                android:name="com.robotca.ControlApp.Fragments.JoystickFragment"
+                android:name="com.robotca.sjControlApp.Fragments.JoystickFragment"
                 android:layout_width="200dip"
                 android:layout_height="200dip"
                 android:layout_alignParentBottom="true"

@@ -13,42 +13,42 @@
         android:summary="@string/topic_pref_summary"
         android:title="@string/topic_pref_title">
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/joy_topic"
             android:key="@string/prefs_joystick_topic_edittext_key"
             android:singleLine="true"
             android:summary="@string/joy_pref_summary"
             android:title="@string/joy_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/laser_scan_topic"
             android:key="@string/prefs_laserscan_topic_edittext_key"
             android:singleLine="true"
             android:summary="@string/laser_pref_summary"
             android:title="@string/laser_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/camera_topic"
             android:key="@string/prefs_camera_topic_edittext_key"
             android:singleLine="true"
             android:summary="@string/camera_pref_summary"
             android:title="@string/camera_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/navsat_topic"
             android:key="@string/prefs_navsat_topic_edittext_key"
             android:singleLine="true"
             android:summary="@string/navsat_pref_summary"
             android:title="@string/navsat_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/odometry_topic"
             android:key="@string/prefs_odometry_topic_edittext_key"
             android:singleLine="true"
             android:summary="@string/odometry_pref_summary"
             android:title="@string/odometry_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/pose_topic"
             android:key="@string/prefs_pose_topic_edittext_key"
             android:singleLine="true"
@@ -106,7 +106,7 @@
         <!--android:enabled="false"-->
         <!--android:selectable="false"/>-->
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="@string/default_warning_mindist"
             android:dependency="@string/prefs_warning_checkbox_key"
             android:inputType="numberDecimal"
@@ -122,7 +122,7 @@
         android:key="@string/prefs_advanced_control_settings_key"
         android:summary="@string/prefs_advanced_control_settings_summary"
         android:title="@string/advanced_controls__pref_title">
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="500"
             android:inputType="number"
             android:key="edittext_laser_scan_detail"
@@ -130,7 +130,7 @@
             android:summary="@string/laser_scan_detail_pref_summary"
             android:title="@string/laser_scan_detail_pref_title" />
 
-        <com.robotca.ControlApp.Views.BetterEditTextPreference
+        <com.robotca.sjControlApp.Views.BetterEditTextPreference
             android:defaultValue="2.0"
             android:inputType="numberDecimal"
             android:key="edittext_random_walk_range_proximity"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.robotca.ControlApp.Views.LaserScanView
+    <com.robotca.sjControlApp.Views.LaserScanView
         android:id="@+id/laser_scan_renderer_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

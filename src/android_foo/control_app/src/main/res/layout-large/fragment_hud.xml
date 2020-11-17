@@ -4,7 +4,7 @@
     android:layout_height="48sp"
     android:background="@android:color/darker_gray"
     android:alpha="0.65"
-    tools:context="com.robotca.ControlApp.Fragments.HUDFragment">
+    tools:context="com.robotca.sjControlApp.Fragments.HUDFragment">
 
     <ImageView
         android:id="@+id/hud_speedometer_icon"
