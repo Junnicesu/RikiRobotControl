@@ -62,13 +62,13 @@ import java.util.TimerTask;
  * @author munjaldesai@google.com (Munjal Desai)
  *         Nathaniel Stone
  */
-public class JoystickView extends RelativeLayout implements AnimationListener,
+public class ptzCamJoystickView extends RelativeLayout implements AnimationListener,
         MessageListener<nav_msgs.Odometry>/*, NodeMain*/ {
 
     /**
      * TAG Debug Log tag.
      */
-    private static final String TAG = "JoystickView";
+    private static final String TAG = "ptzCamJoystickView";
 
     /**
      * BOX_TO_CIRCLE_RATIO The dimensions of the square box that contains the
@@ -272,110 +272,29 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
      */
     private static final float TO_DEGREES = 57.29578f;
 
-    /**
-     * Accelerometer listener used for controlling the joystick by tilting the device.
-     */
-    private final SensorEventListener ACCEL_LISTENER = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event)
-        {
-            float[] vals = event.values;
+    //sj, the UpDown LeftRight percentage value to publish, fUpDownVarLast is te fUpDownVar published last
+    //eg: fUpDownVar = 1, tilt up to the most, fLeftRtVar = -1, turn left to the most
+    private float fUpDownVar;
+    private float fLeftRtVar;
+    private float[] fUpDownVarBuffer;
+    private float[] fLeftRtVarBuffer;
+    private float fUpDownVarLast = 0.0f;
+    private float fLeftRtVarLast = 0.0f;
 
-            // Adjust for different orientations
-            Display display = ((WindowManager) JoystickView.this.getContext().getSystemService(
-                    Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-            int rotation = display.getRotation();
-
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            {
-                float tmp = vals[0];
-                vals[0] = vals[1];
-                vals[1] = -tmp;
-
-                if (rotation == Surface.ROTATION_180)
-                {
-                    vals[0] = -vals[0];
-                    vals[1] = -vals[1];
-                }
-            }
-            else if (rotation == Surface.ROTATION_270)
-            {
-                vals[0] = -vals[0];
-                vals[1] = -vals[1];
-            }
-
-            // Normalize the values
-            for (int i = 0; i < vals.length; ++i)
-                vals[i] /= SensorManager.GRAVITY_EARTH;
-
-            float mag = (float) Math.sqrt((vals[0] * vals[0]) + (vals[1] * vals[1]) + (vals[2] * vals[2]));
-
-            // Calculate the tilt amount
-            float tiltX = (float) Math.round(Math.asin(vals[0] / mag) * TO_DEGREES);
-            float tiltY = (float) Math.round(Math.asin(vals[1] / mag) * TO_DEGREES);
-
-            if (tiltOffset == null)
-            {
-                tiltOffset = new float[] {tiltX, tiltY};
-            }
-            else
-            {
-                tiltX -= tiltOffset[0];
-                tiltY -= tiltOffset[1];
-
-                if (tiltX < -MAX_TILT_ANGLE) tiltX = -MAX_TILT_ANGLE;
-                if (tiltX > MAX_TILT_ANGLE) tiltX = MAX_TILT_ANGLE;
-                if (tiltY < -MAX_TILT_ANGLE) tiltY = -MAX_TILT_ANGLE;
-                if (tiltY > MAX_TILT_ANGLE) tiltY = MAX_TILT_ANGLE;
-
-                tiltX *= joystickRadius / MAX_TILT_ANGLE;
-                tiltY *= joystickRadius / MAX_TILT_ANGLE;
-
-                if (Math.abs(tiltX) < MIN_TILT_AMOUNT * joystickRadius) tiltX = 0.0f;
-                if (Math.abs(tiltY) < MIN_TILT_AMOUNT * joystickRadius) tiltY = 0.0f;
-
-                // Move the joystick
-                if (tiltX != 0f || tiltY != 0f) {
-                    onContactMove(joystickRadius + tiltY, joystickRadius + tiltX);
-
-                    if (accelContactUp) {
-                        accelContactUp = false;
-                        onContactDown();
-                    }
-                }
-                else
-                {
-                    if (!accelContactUp)
-                    {
-                        onContactMove(joystickRadius, joystickRadius);
-                    }
-
-                    accelContactUp = true;
-                    onContactUp();
-                }
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            // Ignore
-        }
-    };
-
-    public JoystickView(Context context) {
+    public ptzCamJoystickView(Context context) {
         super(context);
 
         init(context);
     }
 
-    public JoystickView(Context context, AttributeSet attrs) {
+    public ptzCamJoystickView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         init(context);
     }
 
-    public JoystickView(Context context, AttributeSet attrs, int defStyle) {
+    public ptzCamJoystickView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         init(context);
@@ -386,39 +305,9 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
      */
     private void init(Context context) {
         initVirtualJoystick(context);
-
-//        topicName = "~cmd_vel";
-
-        try {
-            sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        } catch (UnsupportedOperationException e) {
-            // No accelerometer, too bad
-            Log.w(TAG, "No tilt control");
-        }
-    }
-
-    /**
-     * Called to notify that the control scheme has been switched from touch-pad to
-     * tilt sensor.
-     */
-    public void controlSchemeChanged()
-    {
-        Log.d(TAG, "Control Scheme Changed");
-        // Register/unregister the accelerometer listener as needed
-        if (accelerometer != null) {
-            if (controlMode == ControlMode.Tilt) {
-                tiltOffset = null;
-                sensorManager.registerListener(ACCEL_LISTENER, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-                onContactDown();
-
-                Toast.makeText(getContext(), R.string.tilt_calibration_message, Toast.LENGTH_LONG).show();
-            }
-            else {
-                sensorManager.unregisterListener(ACCEL_LISTENER);
-                onContactUp();
-            }
-        }
+        fLeftRtVarBuffer = new float[21];  //sj
+        fUpDownVarBuffer = new float[21];
+//        topicName = "/ptz_msg";  //sj topic name
     }
 
     /**
@@ -882,14 +771,37 @@ public class JoystickView extends RelativeLayout implements AnimationListener,
                     normalizedMagnitude * Math.sin(contactTheta * Math.PI / 180.0), 0.0));
 
         } else {
-            publishVelocity(normalizedMagnitude * Math.cos(contactTheta * Math.PI / 180.0), 0,
-                    normalizedMagnitude * Math.sin(contactTheta * Math.PI / 180.0));
-            Log.i(TAG, String.format("onContactMove: Not holonomic, to publish %f, %f, %f", normalizedMagnitude * Math.cos(contactTheta * Math.PI / 180.0), 0.0,
-                    normalizedMagnitude * Math.sin(contactTheta * Math.PI / 180.0)));
+            fLeftRtVarBuffer[20] = (float) (normalizedMagnitude * Math.sin(contactTheta * Math.PI / 180.0));
+            fUpDownVarBuffer[20] = (float) (normalizedMagnitude * Math.cos(contactTheta * Math.PI / 180.0));
+
+
+            float fSumLeft=0.0f, fSumUp=0.0f ;
+            for(int i =0; i<20; i++){
+                fLeftRtVarBuffer[i] = fLeftRtVarBuffer[i+1];
+                fSumLeft += fLeftRtVarBuffer[i];
+            }
+            for(int i =0; i<20; i++){
+                fUpDownVarBuffer[i] = fUpDownVarBuffer[i+1];
+                fSumUp += fUpDownVarBuffer[i];
+            }
+            fLeftRtVar = (float) (fSumLeft/20.0);
+            fUpDownVar = (float) (fSumUp/20.0);
+
+            Log.i(TAG, String.format("onContactMove: (%f, %f)", fLeftRtVar, fUpDownVar));
+
+            if(Math.abs(fLeftRtVar-fUpDownVarLast)>=0.1 || Math.abs(fUpDownVar-fLeftRtVarLast) >= 0.1) {
+                publishPtz(fLeftRtVar, fUpDownVar);
+                fUpDownVarLast = fUpDownVar;
+                fLeftRtVarLast = fLeftRtVar;
+            }
         }
 
         // Check if the turn-in-place mode needs to be activated/deactivated.
         updateTurnInPlaceMode();
+    }
+
+    private void publishPtz(float fLeftRtVar, float fUpDownVar ) {
+        ((ControlApp) getContext()).getRobotController().publishPtz(fLeftRtVar, fUpDownVar );
     }
 
     /**

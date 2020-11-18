@@ -31,6 +31,7 @@ import nav_msgs.Odometry;
 import sensor_msgs.CompressedImage;
 import sensor_msgs.LaserScan;
 import sensor_msgs.NavSatFix;
+import std_msgs.Float32MultiArray;
 
 /**
  * Manages receiving data from, and sending commands to, a connected Robot.
@@ -57,6 +58,9 @@ public class RobotController implements NodeMain, Savable {
     private Publisher<Twist> movePublisher;
     // Contains the current velocity plan to be published
     private Twist currentVelocityCommand;
+
+    //sj Pulisher for PTZ camera
+    private  Publisher<std_msgs.Float32MultiArray> ptzCamPublisher;
 
     // Subscriber to NavSatFix data
     private Subscriber<NavSatFix> navSatFixSubscriber;
@@ -406,6 +410,11 @@ public class RobotController implements NodeMain, Savable {
         String imageTopic = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.prefs_camera_topic_edittext_key),
                         context.getString(R.string.camera_topic));
+
+        //sj, check ptzCamPublisher
+        if(ptzCamPublisher == null) {
+            ptzCamPublisher = connectedNode.newPublisher("/ptz_msg", Float32MultiArray._TYPE);
+        }
 
         // Refresh the Move Publisher
         if (movePublisher == null
@@ -787,5 +796,13 @@ public class RobotController implements NodeMain, Savable {
         synchronized (imageMutex) {
             return this.image;
         }
+    }
+
+    public void publishPtz(float fLeftRtVar, float fUpDownVar ) {
+        Log.i(TAG, String.format("publishPtz: to publish (%f, %f)",fLeftRtVar, fUpDownVar));
+        std_msgs.Float32MultiArray msg = ptzCamPublisher.newMessage();
+        float[] data = {fLeftRtVar, fUpDownVar};
+        msg.setData(data);
+        //ptzCamPublisher.publish(msg);  //sj: Don't do the publishing here. It may be too frequent.
     }
 }
