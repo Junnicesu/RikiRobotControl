@@ -872,18 +872,8 @@ public class ptzCamJoystickView extends RelativeLayout implements AnimationListe
         updateThumbDivet(0, 0);
         // Reset the pointer id.
         pointerId = INVALID_POINTER_ID;
-        // The robot should stop moving.
-        publishVelocity(0, 0, 0);
-//        // Stop publishing the velocity since the contact is no longer on the
-//        // screen.
-//        publishVelocity = false;
-//        // Publish one last message to make sure the robot stops.
-//        if (publisher != null) {
-//            publisher.publish(currentVelocityCommand);
-//        } else {
-//            Log.w(TAG, "publisher is null");
-//        }
-        // Turn-in-place should not be active anymore.
+        // sj turn the ptz camera back to face straight ahead.
+        publishPtz(0.0f, 0.0f);
         endTurnInPlaceRotation();
         // Hide the orientation tacks.
         for (ImageView tack : orientationWidget) {

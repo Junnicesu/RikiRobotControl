@@ -61,6 +61,9 @@ public class RobotController implements NodeMain, Savable {
 
     //sj Pulisher for PTZ camera
     private  Publisher<std_msgs.Float32MultiArray> ptzCamPublisher;
+    private std_msgs.Float32MultiArray ptzMsg;
+    private Timer ptzPublishTimer;
+    private boolean isPtzMsgNew = false;
 
     // Subscriber to NavSatFix data
     private Subscriber<NavSatFix> navSatFixSubscriber;
@@ -268,7 +271,6 @@ public class RobotController implements NodeMain, Savable {
      * @return True if a resumable RobotPlan was cancelled
      */
     public boolean stop(boolean cancelMotionPlan) {
-
         if (cancelMotionPlan || pausedPlanId == NO_PLAN) {
             pausedPlanId = NO_PLAN;
 
@@ -284,7 +286,9 @@ public class RobotController implements NodeMain, Savable {
         }
 
         publishVelocity = false;
+        Log.i(TAG, "stop: sj, publishVelocity = false, will stop"); //sj
         publishVelocity(0.0, 0.0, 0.0);
+
 
         if (movePublisher != null){
             movePublisher.publish(currentVelocityCommand);
@@ -414,6 +418,16 @@ public class RobotController implements NodeMain, Savable {
         //sj, check ptzCamPublisher
         if(ptzCamPublisher == null) {
             ptzCamPublisher = connectedNode.newPublisher("/ptz_msg", Float32MultiArray._TYPE);
+            ptzMsg = ptzCamPublisher.newMessage();
+            ptzPublishTimer = new Timer();
+            ptzPublishTimer.schedule(new TimerTask() {
+                @Override
+                public void run() { if (isPtzMsgNew) {
+                    ptzCamPublisher.publish(ptzMsg);
+                }
+                }
+            }, 0, 250);
+            isPtzMsgNew = false;
         }
 
         // Refresh the Move Publisher
@@ -435,11 +449,13 @@ public class RobotController implements NodeMain, Savable {
             publisherTimer = new Timer();
             publisherTimer.schedule(new TimerTask() {
                 @Override
-                public void run() { if (publishVelocity) {
-                    movePublisher.publish(currentVelocityCommand);
-                }
+                public void run() {
+                    if (publishVelocity) {
+                        movePublisher.publish(currentVelocityCommand);
+                    }
                 }
             }, 0, 80);
+
             publishVelocity = false;
         }
 
@@ -606,7 +622,6 @@ public class RobotController implements NodeMain, Savable {
             this.laserScan = laserScan;
 
             //boolean invertLaserScan = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.prefs_reverse_angle_reading_key), true);
-
            // if(invertLaserScan) {
                 float[] ranges = this.laserScan.getRanges();
 
@@ -800,9 +815,12 @@ public class RobotController implements NodeMain, Savable {
 
     public void publishPtz(float fLeftRtVar, float fUpDownVar ) {
         Log.i(TAG, String.format("publishPtz: to publish (%f, %f)",fLeftRtVar, fUpDownVar));
-        std_msgs.Float32MultiArray msg = ptzCamPublisher.newMessage();
         float[] data = {fLeftRtVar, fUpDownVar};
-        msg.setData(data);
+        if(ptzMsg == null){
+            ptzMsg = ptzCamPublisher.newMessage();
+        }
+        ptzMsg.setData(data);
+        isPtzMsgNew = true;
         //ptzCamPublisher.publish(msg);  //sj: Don't do the publishing here. It may be too frequent.
     }
 }
