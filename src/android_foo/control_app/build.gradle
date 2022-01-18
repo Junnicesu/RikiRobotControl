@@ -54,6 +54,12 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.android.support:support-v4:25.4.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
+    compile 'org.ros.rosjava_core:rosjava:0.3.6'
+    compile 'org.ros.rosjava_messages:sensor_msgs:1.12.7'
+    compile 'org.ros.rosjava_messages:std_msgs:0.5.11'
+    compile 'org.ros.rosjava_messages:geometry_msgs:1.12.7'
+    compile 'org.ros.rosjava_messages:nav_msgs:1.10.+'
+    compile 'org.ros.rosjava_bootstrap:message_generation:0.3.3'
     compile project(':control_app_lib')
 
 }

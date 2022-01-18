@@ -6,7 +6,7 @@ buildscript {
     //apply from: "https://raw.githubusercontent.com/rosjava/android_core/kinetic/buildscript.gradle"
             dependencies {
         //Add this to fix the gradle plugin issues
-        classpath 'com.android.tools.build:gradle:3.2.1'
+//        classpath 'com.android.tools.build:gradle:3.2.1'
 
         // TEST
         classpath 'junit:junit:4.12'
@@ -50,13 +50,13 @@ subprojects {
     apply plugin: 'ros-android'
 
     afterEvaluate { project ->
-//        android {
-//            // Exclude a few files that are duplicated across our dependencies and
-//            // prevent packaging Android applications.
-//            packagingOptions {
-//                exclude "META-INF/LICENSE.txt"
-//                exclude "META-INF/NOTICE.txt"
-//            }
-//        }
+        android {
+            // Exclude a few files that are duplicated across our dependencies and
+            // prevent packaging Android applications.
+            packagingOptions {
+                exclude "META-INF/LICENSE.txt"
+                exclude "META-INF/NOTICE.txt"
+            }
+        }
     }
 }
